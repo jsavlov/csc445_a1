@@ -11,37 +11,37 @@ from socket_helper import fresh_socket
     Methods start here
 """
 
-def send_latency(tp_len, tp_sock):
+def send_latency(s_lat_len, s_lat_sock):
     i = 0
 
     tp_array = bytearray()
     tp_array.append(1)
     i += 1
 
-    while i < tp_len - 1:
+    while i < s_lat_len - 1:
         tp_array.append(0)
         i += 1
 
-    if tp_len != 1:
+    if s_lat_len != 1:
         tp_array.append(255)
 
     amount_sent = 0
     while amount_sent < len(tp_array):
-        sent = tp_sock.send(tp_array[amount_sent:])
+        sent = s_lat_sock.send(tp_array[amount_sent:])
         amount_sent += sent
 
-    tp_sock.shutdown(socket.SHUT_RD)
+    s_lat_sock.shutdown(socket.SHUT_RD)
     return time.clock()
 
-def receive_latency(lat_len, lat_sock):
+def receive_latency(r_lat_len, r_lat_sock):
     received_bytes = []
 
-    data = lat_sock.recv(lat_len)
+    data = r_lat_sock.recv(r_lat_len)
     while data != '':
         received_bytes.append(bytes(data))
-        data = lat_sock.recv(lat_len)
+        data = r_lat_sock.recv(r_lat_len)
 
-    lat_sock.close()
+    r_lat_sock.close()
     return time.clock()
 
 
