@@ -67,12 +67,3 @@ while 1:
 
 
 client_socket.close()
-
-
-
-
-
-
-
-
-
