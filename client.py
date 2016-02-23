@@ -25,13 +25,14 @@ def send_latency(s_lat_len, s_lat_sock):
     if s_lat_len != 1:
         tp_array.append(255)
 
+    s_time = time.clock()
     amount_sent = 0
     while amount_sent < len(tp_array):
         sent = s_lat_sock.send(tp_array[amount_sent:])
         amount_sent += sent
 
     s_lat_sock.shutdown(socket.SHUT_RD)
-    return time.clock()
+    return s_time
 
 def receive_latency(r_lat_len, r_lat_sock):
     received_bytes = []
@@ -41,8 +42,9 @@ def receive_latency(r_lat_len, r_lat_sock):
         received_bytes.append(bytes(data))
         data = r_lat_sock.recv(r_lat_len)
 
+    r_time = time.clock()
     r_lat_sock.close()
-    return time.clock()
+    return r_time
 
 
 
