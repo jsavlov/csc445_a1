@@ -29,10 +29,9 @@ def test_latency(lat_data, sock):
     print "Reply sent..."
 
 
-
 serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # The socket object for the server
 port = 2694 # The port number assigned in class
-buf_size = 8192 # Size of the receiving buffer
+buf_size = 1024 # Size of the receiving buffer
 
 print "Starting server..."
 
