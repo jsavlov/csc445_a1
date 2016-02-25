@@ -81,7 +81,7 @@ def calc_throughput(tp_size, tp_sock):
 
     tx_time = (r_time + s_time) / 2
 
-    tx_rate = tp_size / tx_time
+    tx_rate = (tp_size / 1000) / tx_time
 
     return tx_rate
 
