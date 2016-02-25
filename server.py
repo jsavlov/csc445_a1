@@ -31,6 +31,18 @@ def test_latency(lat_data, sock):
 
     print "Reply sent..."
 
+def test_throughput(tp_data, tp_sock):
+    # Send the data back...
+    print "Sending throughput reply..."
+    amount_sent = 0
+    while amount_sent < len(tp_data):
+        sent = tp_sock.send(tp_data[amount_sent:])
+        amount_sent += sent
+        print "** Sent " + str(sent) + " of " + str(len(tp_data)) + "..."
+
+    print "Throughput reply sent..."
+
+
 
 port = 2694 # The port number assigned in class
 buf_size = 1024 # Size of the receiving buffer
