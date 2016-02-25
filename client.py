@@ -79,7 +79,6 @@ print "Latency 32 byte result: " + str(lat32_rtt_time * 1000)
 host_socket = fresh_socket(HOST_SERVER, PORT)
 print "Sending Latency Test: 1024 bytes"
 lat1024_tx_time = send_latency(1024, host_socket)
-host_socket.recv(1024)
 lat1024_rx_time = receive_latency(1024, host_socket)
 lat1024_rtt_time = lat1024_rx_time - lat1024_tx_time
 print "Latency 1024 byte result: " + str(lat1024_rtt_time * 1000)
