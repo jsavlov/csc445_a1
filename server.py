@@ -2,6 +2,8 @@
 # server.py
 
 import socket
+import getopt
+import sys
 
 def test_latency(lat_data, sock):
     data_len = len(lat_data)
@@ -32,6 +34,13 @@ def test_latency(lat_data, sock):
 serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # The socket object for the server
 port = 2694 # The port number assigned in class
 buf_size = 1024 # Size of the receiving buffer
+
+try:
+    opts, args = getopt.getopt(sys.argv[1:], "p:")
+except getopt.GetoptError:
+    print "Usage: server.py -p <tcp | udp>"
+    sys.exit(2)
+
 
 print "Starting server..."
 
