@@ -54,6 +54,8 @@ def receive_latency(r_lat_len, r_lat_sock):
 """
 
 PORT = 2694  # The port used for the socket
+HOST_SERVER = None
+using_udp = None
 
 # Get command line options
 try:
@@ -81,11 +83,11 @@ for opt, arg in opts:
             sys.exit(2)
 
 # If no host server specified, ask for one
-if HOST_SERVER == '':
+if HOST_SERVER is None:
     HOST_SERVER = raw_input("Enter the host server address: ")
 
 # If protocol is unspecified, use TCP.
-if using_udp == '':
+if using_udp is None:
     using_udp = False
 
 
@@ -93,21 +95,21 @@ print "Using host " + str(HOST_SERVER)
 print "Using UDP..." if using_udp else "Using TCP..."
 
 
-host_socket = fresh_client_socket(HOST_SERVER, PORT)
+host_socket = fresh_client_socket(HOST_SERVER, PORT, using_udp)
 print "Sending Latency Test: 1 byte"
 lat1_tx_time = send_latency(1, host_socket)
 lat1_rx_time = receive_latency(1, host_socket)
 lat1_rtt_time = lat1_rx_time - lat1_tx_time
 print "Latency 1 byte result: " + str(lat1_rtt_time * 1000)
 
-host_socket = fresh_client_socket(HOST_SERVER, PORT)
+host_socket = fresh_client_socket(HOST_SERVER, PORT, using_udp)
 print "Sending Latency Test: 32 bytes"
 lat32_tx_time = send_latency(32, host_socket)
 lat32_rx_time = receive_latency(32, host_socket)
 lat32_rtt_time = lat32_rx_time - lat32_tx_time
 print "Latency 32 byte result: " + str(lat32_rtt_time * 1000)
 
-host_socket = fresh_client_socket(HOST_SERVER, PORT)
+host_socket = fresh_client_socket(HOST_SERVER, PORT, using_udp)
 print "Sending Latency Test: 1024 bytes"
 lat1024_tx_time = send_latency(1024, host_socket)
 lat1024_rx_time = receive_latency(1024, host_socket)
