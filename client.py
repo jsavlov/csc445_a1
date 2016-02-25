@@ -47,6 +47,42 @@ def receive_latency(r_lat_len, r_lat_sock):
     r_lat_sock.close()
     return r_time
 
+def calc_throughput(tp_size, tp_sock):
+    i = 0
+
+    tp_array = bytearray()
+    tp_array.append(2)
+
+    while i < tp_size - 1:
+        tp_array.append(0)
+        i += 1
+
+    if tp_size != 1:
+        tp_array.append(255)
+        i += 1
+
+    s_time = time.clock()
+    amount_sent = 0
+    while amount_sent < len(tp_array):
+        sent = tp_sock.send(tp_array[amount_sent:])
+        amount_sent += sent
+
+    tp_sock.shutdown(socket.SHUT_RD)
+
+    reply_bytes = []
+
+    data = tp_sock.recv(4096)
+    while data != '':
+        reply_bytes.append(data)
+        data = tp_sock.recv(4096)
+
+    r_time = time.clock()
+
+    tx_time = (r_time + s_time) / 2
+
+    tx_rate = tp_size / tx_time
+
+    return tx_rate
 
 """
     This is where the program script starts
