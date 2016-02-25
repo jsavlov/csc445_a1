@@ -4,6 +4,7 @@
 import socket
 import getopt
 import sys
+from socket_helper import fresh_server_socket
 
 def test_latency(lat_data, sock):
     data_len = len(lat_data)
@@ -31,9 +32,9 @@ def test_latency(lat_data, sock):
     print "Reply sent..."
 
 
-serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # The socket object for the server
 port = 2694 # The port number assigned in class
 buf_size = 1024 # Size of the receiving buffer
+
 
 try:
     opts, args = getopt.getopt(sys.argv[1:], "p:")
@@ -41,8 +42,27 @@ except getopt.GetoptError:
     print "Usage: server.py -p <tcp | udp>"
     sys.exit(2)
 
+if len(opts) == 0:
+    using_udp = False
+
+for opt, arg in opts:
+    if opt == '-p':
+        pro_choice = arg
+        if arg == "udp":
+            using_udp = True
+            print "Using UDP..."
+        elif arg == "tcp":
+            using_udp = False
+            print "Using TCP..."
+        else:
+            print "Option invalid. Please use 'udp' or 'tcp' as an option."
+            sys.exit(2)
+
 
 print "Starting server..."
+
+# Create a server socket
+serversocket = fresh_server_socket(port)
 
 # Start the server
 serversocket.bind((socket.gethostname(), port))
