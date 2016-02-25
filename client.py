@@ -4,6 +4,7 @@
 import sys
 import socket
 import time
+import getopt
 from socket_helper import fresh_client_socket
 
 
@@ -52,14 +53,44 @@ def receive_latency(r_lat_len, r_lat_sock):
     This is where the program script starts
 """
 
-# If there was a server entered as a command line argument,
-# use that one.
+PORT = 2694  # The port used for the socket
+
+# Get command line options
 try:
-    HOST_SERVER = sys.argv[1]
-except IndexError:
+    opts, args = getopt.getopt(sys.argv[1:], "s:p:")
+except getopt.GetoptError:
+    print "Usage: client.py -s <host> -p <udp | tcp>"
+    sys.exit(2)
+
+# If there are no command line options, prompt for a host and use TCP.
+if len(opts) == 0:
+    HOST_SERVER = raw_input("Enter the host server address: ")
+    using_udp = False
+
+# Look through the command line options
+for opt, arg in opts:
+    if opt == '-s':
+        HOST_SERVER = arg
+    elif opt == '-p':
+        if arg == 'udp':
+            using_udp = True
+        elif arg == 'tcp':
+            using_udp = False
+        else:
+            print "Option invalid. Please use 'udp' or 'tcp' as an option."
+            sys.exit(2)
+
+# If no host server specified, ask for one
+if HOST_SERVER == '':
     HOST_SERVER = raw_input("Enter the host server address: ")
 
-PORT = 2694  # The port used for the socket
+# If protocol is unspecified, use TCP.
+if using_udp == '':
+    using_udp = False
+
+
+print "Using host " + str(HOST_SERVER)
+print "Using UDP..." if using_udp else "Using TCP..."
 
 
 host_socket = fresh_client_socket(HOST_SERVER, PORT)
