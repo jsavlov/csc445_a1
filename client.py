@@ -47,6 +47,43 @@ def receive_latency(r_lat_len, r_lat_sock):
     r_lat_sock.close()
     return r_time
 
+def calc_throughput(tp_size, tp_sock):
+    i = 0
+
+    tp_array = bytearray()
+    tp_array.append(2)
+
+    while i < tp_size - 1:
+        tp_array.append(0)
+        i += 1
+
+    if tp_size != 1:
+        tp_array.append(255)
+        i += 1
+
+    s_time = time.clock()
+    amount_sent = 0
+    while amount_sent < len(tp_array):
+        sent = tp_sock.send(tp_array[amount_sent:])
+        amount_sent += sent
+
+    tp_sock.shutdown(socket.SHUT_RD)
+
+    reply_bytes = []
+
+    data = tp_sock.recv(4096)
+    while data != '':
+        reply_bytes.append(data)
+        data = tp_sock.recv(4096)
+
+    r_time = time.clock()
+    tp_sock.close()
+
+    tx_time = (r_time + s_time) / 2
+
+    tx_rate = (tp_size / 1000) / tx_time
+
+    return tx_rate
 
 """
     This is where the program script starts
@@ -114,6 +151,31 @@ lat1024_tx_time = send_latency(1024, host_socket)
 lat1024_rx_time = receive_latency(1024, host_socket)
 lat1024_rtt_time = lat1024_rx_time - lat1024_tx_time
 print "Latency 1024 byte result: " + str(lat1024_rtt_time * 1000)
+
+host_socket = fresh_client_socket(HOST_SERVER, PORT, using_udp)
+print "Throughput test: 1 KBytes"
+tp1k_tx_rate = calc_throughput(1000, host_socket)
+print "Throughput 1 Kbyte result: " + str(tp1k_tx_rate)
+
+host_socket = fresh_client_socket(HOST_SERVER, PORT, using_udp)
+print "Throughput test: 16 KBytes"
+tp16k_tx_rate = calc_throughput(16000, host_socket)
+print "Throughput 16 Kbyte result: " + str(tp16k_tx_rate)
+
+host_socket = fresh_client_socket(HOST_SERVER, PORT, using_udp)
+print "Throughput test: 64 KBytes"
+tp64k_tx_rate = calc_throughput(64000, host_socket)
+print "Throughput 64 Kbyte result: " + str(tp64k_tx_rate)
+
+host_socket = fresh_client_socket(HOST_SERVER, PORT, using_udp)
+print "Throughput test: 256 KBytes"
+tp256k_tx_rate = calc_throughput(256000, host_socket)
+print "Throughput 256 Kbyte result: " + str(tp256k_tx_rate)
+
+host_socket = fresh_client_socket(HOST_SERVER, PORT, using_udp)
+print "Throughput test: 1 MBytes"
+tp1m_tx_rate = calc_throughput(1000000, host_socket)
+print "Throughput 1 Mbyte result: " + str(tp1m_tx_rate)
 
 
 # Close the connection

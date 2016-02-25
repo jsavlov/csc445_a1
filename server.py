@@ -19,8 +19,8 @@ def test_latency(lat_data, sock):
             lat_reply.append(0)
             i += 1
 
-            lat_reply.append(255)
-            i += 1
+        lat_reply.append(255)
+        i += 1
 
     print "Sending latency reply..."
     amount_sent = 0
@@ -30,6 +30,35 @@ def test_latency(lat_data, sock):
         print "** Sent " + str(sent) + " of " + str(len(lat_reply)) + "..."
 
     print "Reply sent..."
+
+def test_throughput(tp_data, tp_sock):
+    # Send the data back...
+    print "Sending throughput reply..."
+
+    data_len = len(tp_data)
+    tp_reply = bytearray()
+
+    i = 0
+
+    tp_reply.append(2)
+
+    if data_len != 1:
+        i += 1
+        while i < data_len - 1:
+            tp_reply.append(0)
+            i += 1
+
+        tp_reply.append(255)
+        i += 1
+
+    amount_sent = 0
+    while amount_sent < len(tp_reply):
+        sent = tp_sock.send(tp_reply[amount_sent:])
+        amount_sent += sent
+        print "** Sent " + str(sent) + " of " + str(len(tp_reply)) + "..."
+
+    tp_sock.close()
+    print "Throughput reply sent..."
 
 
 port = 2694 # The port number assigned in class
@@ -91,7 +120,8 @@ while 1:
         print "Latency test received"
         test_latency(data_bytes, client_socket)
     elif option == 2:
-        print "Second option"
+        print "Throughput test received"
+        test_throughput(data_bytes, client_socket)
     else:
         print "No idea..."
 
