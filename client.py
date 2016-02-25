@@ -151,6 +151,10 @@ lat1024_rx_time = receive_latency(1024, host_socket)
 lat1024_rtt_time = lat1024_rx_time - lat1024_tx_time
 print "Latency 1024 byte result: " + str(lat1024_rtt_time * 1000)
 
+host_socket = fresh_client_socket(HOST_SERVER, PORT, using_udp)
+print "Throughput test: 1 KBytes"
+tp1k_tx_rate = calc_throughput(1000, host_socket)
+print "Throughput 1 Kbyte result: " + str(tp1k_tx_rate)
 
 # Close the connection
 host_socket.close()

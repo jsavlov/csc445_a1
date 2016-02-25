@@ -103,7 +103,8 @@ while 1:
         print "Latency test received"
         test_latency(data_bytes, client_socket)
     elif option == 2:
-        print "Second option"
+        print "Throughput test received"
+        test_throughput(data_bytes, client_socket)
     else:
         print "No idea..."
 
