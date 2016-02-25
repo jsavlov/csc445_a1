@@ -1,6 +1,6 @@
 import socket
 
-def fresh_socket(host, port, is_udp=False):
+def fresh_client_socket(host, port, is_udp=False):
     # The socket object used to connect to the server.
     # If the isUDP parameter of the function is true, socket.SOCK_DGRAM is used.
     # Otherwise, it uses socket.SOCK_STREAM.
