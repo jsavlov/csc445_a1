@@ -11,11 +11,13 @@ from socket_functions import test_latency, test_throughput
 port = 2694 # The port number assigned in class
 buf_size = 1024 # Size of the receiving buffer
 
+# A usage message to help users who are unfamiliar with the program
+usage = "Usage: server.py -p <tcp | udp>"
 
 try:
     opts, args = getopt.getopt(sys.argv[1:], "p:")
 except getopt.GetoptError:
-    print "Usage: server.py -p <tcp | udp>"
+    print str(usage)
     sys.exit(2)
 
 if len(opts) == 0:
@@ -31,7 +33,7 @@ for opt, arg in opts:
             using_udp = False
             print "Using TCP..."
         else:
-            print "Option invalid. Please use 'udp' or 'tcp' as an option."
+            print str(usage)
             sys.exit(2)
 
 

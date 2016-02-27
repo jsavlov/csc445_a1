@@ -11,11 +11,15 @@ PORT = 2694  # The port used for the socket
 HOST_SERVER = None
 using_udp = None
 
+# A usage message to help users who are unfamiliar with the program
+
+usage = "Usage: client.py -s <host> -p <udp | tcp>"
+
 # Get command line options
 try:
     opts, args = getopt.getopt(sys.argv[1:], "s:p:")
 except getopt.GetoptError:
-    print "Usage: client.py -s <host> -p <udp | tcp>"
+    print str(usage)
     sys.exit(2)
 
 # If there are no command line options, prompt for a host and use TCP.
@@ -33,7 +37,7 @@ for opt, arg in opts:
         elif arg == 'tcp':
             using_udp = False
         else:
-            print "Option invalid. Please use 'udp' or 'tcp' as an option."
+            print str(usage)
             sys.exit(2)
 
 # If no host server specified, ask for one
