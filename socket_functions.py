@@ -1,5 +1,6 @@
 import socket
 import time
+from socket_helper import send_udp_friendly, udp_message_size
 
 """
 Client Functions
@@ -21,9 +22,13 @@ def send_latency(s_lat_len, s_lat_sock):
 
     s_time = time.clock()
     amount_sent = 0
-    while amount_sent < len(lat_array):
-        sent = s_lat_sock.send(lat_array[amount_sent:])
-        amount_sent += sent
+
+    if s_lat_sock.type is socket.SOCK_DGRAM and len(lat_array) > udp_message_size:
+        send_udp_friendly(lat_array, s_lat_sock)
+    else:
+        while amount_sent < len(lat_array):
+            sent = s_lat_sock.send(lat_array[amount_sent:])
+            amount_sent += sent
 
     s_lat_sock.shutdown(socket.SHUT_RD)
     return s_time
@@ -58,9 +63,13 @@ def calc_throughput(tp_size, tp_sock):
 
     s_time = time.clock()
     amount_sent = 0
-    while amount_sent < len(tp_array):
-        sent = tp_sock.send(tp_array[amount_sent:])
-        amount_sent += sent
+
+    if tp_sock.type is socket.SOCK_DGRAM and len(tp_array) > udp_message_size:
+        send_udp_friendly(tp_array, tp_sock)
+    else:
+        while amount_sent < len(tp_array):
+            sent = tp_sock.send(tp_array[amount_sent:])
+            amount_sent += sent
 
     tp_sock.shutdown(socket.SHUT_RD)
 
@@ -103,10 +112,14 @@ def test_latency(lat_data, sock):
 
     print "Sending latency reply..."
     amount_sent = 0
-    while amount_sent < len(lat_reply):
-        sent = sock.send(lat_reply[amount_sent:])
-        amount_sent += sent
-        print "** Sent " + str(sent) + " of " + str(len(lat_reply)) + "..."
+
+    if sock.type is socket.SOCK_DGRAM and len(lat_reply) > udp_message_size:
+        send_udp_friendly(lat_reply, sock)
+    else:
+        while amount_sent < len(lat_reply):
+            sent = sock.send(lat_reply[amount_sent:])
+            amount_sent += sent
+            print "** Sent " + str(sent) + " of " + str(len(lat_reply)) + "..."
 
     print "Reply sent..."
 
@@ -132,10 +145,14 @@ def test_throughput(tp_data, tp_sock):
         i += 1
 
     amount_sent = 0
-    while amount_sent < len(tp_reply):
-        sent = tp_sock.send(tp_reply[amount_sent:])
-        amount_sent += sent
-        print "** Sent " + str(sent) + " of " + str(len(tp_reply)) + "..."
+
+    if tp_sock.type is socket.SOCK_DGRAM and len(tp_reply) > udp_message_size:
+        send_udp_friendly(tp_reply, sock)
+    else:
+        while amount_sent < len(tp_reply):
+            sent = tp_sock.send(tp_reply[amount_sent:])
+            amount_sent += sent
+            print "** Sent " + str(sent) + " of " + str(len(tp_reply)) + "..."
 
     tp_sock.close()
     print "Throughput reply sent..."
