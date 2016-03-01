@@ -147,7 +147,7 @@ def test_throughput(tp_data, tp_sock):
     amount_sent = 0
 
     if tp_sock.type is socket.SOCK_DGRAM and len(tp_reply) > udp_message_size:
-        send_udp_friendly(tp_reply, sock)
+        send_udp_friendly(tp_reply, tp_sock)
     else:
         while amount_sent < len(tp_reply):
             sent = tp_sock.send(tp_reply[amount_sent:])
