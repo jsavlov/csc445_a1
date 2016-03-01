@@ -1,7 +1,6 @@
 import socket
 import time
-import sys
-from socket_helper import send_udp_friendly, udp_message_size, fresh_client_socket
+from socket_helper import send_udp_friendly, udp_message_size
 
 """
 Client Functions
