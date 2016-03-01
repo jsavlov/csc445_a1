@@ -113,8 +113,6 @@ if using_udp is False:
     print "Interaction test: 1024 x 1KByte messages"
     observe_interaction(1024, 1024, host_socket)
 
-
-
 # Close the connection
 host_socket.close()
 
