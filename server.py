@@ -60,7 +60,6 @@ while 1:
     data = client_socket.recv(buf_size)
     incoming_interaction_test = False
     while data != '' or incoming_interaction_test is True:
-        print "Data received"
         data_bytes.append(bytearray(data))
         if data_bytes[0][0] == 3 and incoming_interaction_test is False:
             incoming_interaction_test = True
