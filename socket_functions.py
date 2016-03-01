@@ -1,6 +1,7 @@
 import socket
 import time
-from socket_helper import send_udp_friendly, udp_message_size
+import sys
+from socket_helper import send_udp_friendly, udp_message_size, fresh_client_socket
 
 """
 Client Functions
@@ -89,6 +90,38 @@ def calc_throughput(tp_size, tp_sock):
 
     return tx_rate
 
+def observe_interaction(m_size, m_parts, i_sock):
+    b_array = bytearray()
+    i = 0
+
+    b_array.append(3)
+    i += 1
+    while i < m_size - 1:
+        b_array.append(0)
+        i += 1
+
+    b_array.append(255)
+    i += 1
+
+    parts_sent = 0
+    while parts_sent < m_parts:
+        amount_sent = 0
+        while amount_sent < len(b_array):
+            sent = i_sock.send(b_array[amount_sent:])
+            amount_sent += sent
+
+        reply_found = False
+        while reply_found is False:
+            reply_conf = i_sock.recv(32)
+            response = bytearray(reply_conf)
+            if len(reply_conf) > 0 and int(reply_conf) == 3:
+                parts_sent += 1
+                reply_found = True
+
+    i_sock.close()
+
+
+
 """
 Server functions
 """
@@ -154,5 +187,16 @@ def test_throughput(tp_data, tp_sock):
             amount_sent += sent
             print "** Sent " + str(sent) + " of " + str(len(tp_reply)) + "..."
 
-    tp_sock.close()
     print "Throughput reply sent..."
+
+def test_interaction(i_sock):
+    i_sock.send(bytearray(bytes(3)))
+
+    inc_data = i_sock.recv(4096)
+    while inc_data != '':
+        inc_data_len = len(inc_data)
+        if ord(inc_data[inc_data_len - 1]) == 255:
+            i_sock.send(bytearray(bytes(3)))
+        inc_data = i_sock.recv(4096)
+
+    print "Done testing interaction"

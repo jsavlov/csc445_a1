@@ -5,11 +5,11 @@ import socket
 import getopt
 import sys
 from socket_helper import fresh_server_socket
-from socket_functions import test_latency, test_throughput
+from socket_functions import test_latency, test_throughput, test_interaction
 
 
 port = 2694 # The port number assigned in class
-buf_size = 1024 # Size of the receiving buffer
+buf_size = 4096 # Size of the receiving buffer
 
 # A usage message to help users who are unfamiliar with the program
 usage = "Usage: server.py -p <tcp | udp>"
@@ -58,8 +58,17 @@ while 1:
     print "Connection received from " + str(client_addr)
     data_bytes = []
     data = client_socket.recv(buf_size)
-    while data != '':
+    incoming_interaction_test = False
+    while data != '' or incoming_interaction_test is True:
+        print "Data received"
         data_bytes.append(bytearray(data))
+        if data_bytes[0][0] == 3 and incoming_interaction_test is False:
+            incoming_interaction_test = True
+
+        if incoming_interaction_test is True:
+            d_len = len(data)
+            if ord(data[d_len - 1]) == 255:
+                break
         data = client_socket.recv(buf_size)
 
     option = data_bytes[0][0]
@@ -71,6 +80,9 @@ while 1:
     elif option == 2:
         print "Throughput test received"
         test_throughput(data_bytes, client_socket)
+    elif option == 3:
+        print "Interaction test received"
+        test_interaction(client_socket)
     else:
         print "No idea..."
 

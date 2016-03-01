@@ -4,7 +4,7 @@
 import sys
 import getopt
 from socket_helper import fresh_client_socket
-from socket_functions import send_latency, receive_latency, calc_throughput
+from socket_functions import send_latency, receive_latency, calc_throughput, observe_interaction
 
 
 PORT = 2694  # The port used for the socket
@@ -98,6 +98,21 @@ host_socket = fresh_client_socket(HOST_SERVER, PORT, using_udp)
 print "Throughput test: 1 MBytes"
 tp1m_tx_rate = calc_throughput(1000000, host_socket)
 print "Throughput 1 Mbyte result: " + str(tp1m_tx_rate)
+
+# If we aren't using UDP, do the interaction tests
+if using_udp is False:
+    host_socket = fresh_client_socket(HOST_SERVER, PORT, using_udp)
+    print "Interaction test: 256 x 4KByte messages"
+    observe_interaction(4096, 256, host_socket)
+
+    host_socket = fresh_client_socket(HOST_SERVER, PORT, using_udp)
+    print "Interaction test: 512 x 2KByte messages"
+    observe_interaction(2048, 512, host_socket)
+
+    host_socket = fresh_client_socket(HOST_SERVER, PORT, using_udp)
+    print "Interaction test: 1024 x 1KByte messages"
+    observe_interaction(1024, 1024, host_socket)
+
 
 
 # Close the connection
