@@ -20,7 +20,7 @@ def send_latency(s_lat_len, s_lat_sock):
     if s_lat_len != 1:
         lat_array.append(255)
 
-    s_time = time.clock()
+    s_time = time.time()
     amount_sent = 0
 
     if s_lat_sock.type is socket.SOCK_DGRAM and len(lat_array) > udp_message_size:
@@ -42,7 +42,7 @@ def receive_latency(r_lat_len, r_lat_sock):
         received_bytes.append(bytes(data))
         data = r_lat_sock.recv(r_lat_len)
 
-    r_time = time.clock()
+    r_time = time.time()
     r_lat_sock.close()
     return r_time
 
@@ -61,7 +61,7 @@ def calc_throughput(tp_size, tp_sock):
         tp_array.append(255)
         i += 1
 
-    s_time = time.clock()
+    s_time = time.time()
     amount_sent = 0
 
     if tp_sock.type is socket.SOCK_DGRAM and len(tp_array) > udp_message_size:
@@ -80,7 +80,7 @@ def calc_throughput(tp_size, tp_sock):
         reply_bytes.append(data)
         data = tp_sock.recv(4096)
 
-    r_time = time.clock()
+    r_time = time.time()
     tp_sock.close()
 
     tx_time = (r_time + s_time) / 2
@@ -102,7 +102,7 @@ def observe_interaction(m_size, m_parts, i_sock):
     b_array.append(255)
     i += 1
 
-    start_time = time.clock()
+    start_time = time.time()
 
     parts_sent = 0
     while parts_sent < m_parts:
@@ -120,7 +120,7 @@ def observe_interaction(m_size, m_parts, i_sock):
                 reply_found = True
 
     i_sock.close()
-    end_time = time.clock()
+    end_time = time.time()
     return end_time - start_time
 
 

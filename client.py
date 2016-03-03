@@ -58,21 +58,21 @@ print "Sending Latency Test: 1 byte"
 lat1_tx_time = send_latency(1, host_socket)
 lat1_rx_time = receive_latency(1, host_socket)
 lat1_rtt_time = lat1_rx_time - lat1_tx_time
-print "Latency 1 byte result: " + str(lat1_rtt_time * 1000)
+print "Latency 1 byte result: " + str(lat1_rtt_time)
 
 host_socket = fresh_client_socket(HOST_SERVER, PORT, using_udp)
 print "Sending Latency Test: 32 bytes"
 lat32_tx_time = send_latency(32, host_socket)
 lat32_rx_time = receive_latency(32, host_socket)
 lat32_rtt_time = lat32_rx_time - lat32_tx_time
-print "Latency 32 byte result: " + str(lat32_rtt_time * 1000)
+print "Latency 32 byte result: " + str(lat32_rtt_time)
 
 host_socket = fresh_client_socket(HOST_SERVER, PORT, using_udp)
 print "Sending Latency Test: 1024 bytes"
 lat1024_tx_time = send_latency(1024, host_socket)
 lat1024_rx_time = receive_latency(1024, host_socket)
 lat1024_rtt_time = lat1024_rx_time - lat1024_tx_time
-print "Latency 1024 byte result: " + str(lat1024_rtt_time * 1000)
+print "Latency 1024 byte result: " + str(lat1024_rtt_time)
 
 host_socket = fresh_client_socket(HOST_SERVER, PORT, using_udp)
 print "Throughput test: 1 KBytes"
