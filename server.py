@@ -40,7 +40,7 @@ for opt, arg in opts:
 print "Starting server..."
 
 # Create a server socket
-serversocket = fresh_server_socket(port)
+serversocket = fresh_server_socket(port. using_udp)
 
 # Start the server
 serversocket.bind((socket.gethostname(), port))
