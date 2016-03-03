@@ -61,7 +61,7 @@ def calc_throughput(tp_size, tp_sock):
         tp_array.append(255)
         i += 1
 
-    s_time = time.time()
+    s_time_b = time.time()
     amount_sent = 0
 
     if tp_sock.type is socket.SOCK_DGRAM and len(tp_array) > udp_message_size:
@@ -72,20 +72,24 @@ def calc_throughput(tp_size, tp_sock):
             amount_sent += sent
 
     tp_sock.shutdown(socket.SHUT_RD)
+    s_time_e = time.time()
+    s_time = s_time_e - s_time_b
 
     reply_bytes = []
 
+    r_time_b = time.time()
     data = tp_sock.recv(4096)
     while data != '':
         reply_bytes.append(data)
         data = tp_sock.recv(4096)
 
-    r_time = time.time()
     tp_sock.close()
+    r_time_e = time.time()
+    r_time = r_time_e - r_time_b
 
     tx_time = (r_time + s_time) / 2
 
-    tx_rate = (tp_size / 1000) / tx_time
+    tx_rate = (tp_size) / tx_time
 
     return tx_rate
 
