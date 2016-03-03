@@ -103,15 +103,18 @@ print "Throughput 1 Mbyte result: " + str(tp1m_tx_rate)
 if using_udp is False:
     host_socket = fresh_client_socket(HOST_SERVER, PORT, using_udp)
     print "Interaction test: 256 x 4KByte messages"
-    observe_interaction(4096, 256, host_socket)
+    interaction_4kb_time = observe_interaction(4096, 256, host_socket)
+    print "Interaction test 256 x 4KByte result: " + str(interaction_4kb_time)
 
     host_socket = fresh_client_socket(HOST_SERVER, PORT, using_udp)
     print "Interaction test: 512 x 2KByte messages"
-    observe_interaction(2048, 512, host_socket)
+    interaction_2kb_time = observe_interaction(2048, 512, host_socket)
+    print "Interaction test 512 x 2KByte result: " + str(interaction_2kb_time)
 
     host_socket = fresh_client_socket(HOST_SERVER, PORT, using_udp)
     print "Interaction test: 1024 x 1KByte messages"
-    observe_interaction(1024, 1024, host_socket)
+    interaction_1kb_time = observe_interaction(1024, 1024, host_socket)
+    print "Interaction test 1024 x 1KByte result: " + str(interaction_1kb_time)
 
 # Close the connection
 host_socket.close()

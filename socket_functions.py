@@ -102,6 +102,8 @@ def observe_interaction(m_size, m_parts, i_sock):
     b_array.append(255)
     i += 1
 
+    start_time = time.clock()
+
     parts_sent = 0
     while parts_sent < m_parts:
         amount_sent = 0
@@ -118,6 +120,8 @@ def observe_interaction(m_size, m_parts, i_sock):
                 reply_found = True
 
     i_sock.close()
+    end_time = time.clock()
+    return end_time - start_time
 
 
 
