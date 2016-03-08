@@ -99,7 +99,8 @@ while 1:
         print "Interaction test received"
         test_interaction(client_socket)
     else:
-        print "No idea..."
+        print "No idea... data_bytes dump:"
+        print repr(data_bytes)
 
 if using_udp:
     client_socket.close()
