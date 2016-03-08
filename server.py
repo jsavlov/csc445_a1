@@ -59,9 +59,8 @@ while 1:
     if using_udp:
         # Receive the data via UDP
         (data, udp_host) = receive_udp_friendly(serversocket)
-        udp_host_name = udp_host[0]
-        print "Received UDP connection from " + str(udp_host_name)
-        data_bytes.append(bytearray(data))
+        print "Received UDP connection from " + str(udp_host)
+        data_bytes = data
     else:
         (client_socket, client_addr) = serversocket.accept()
 
@@ -88,13 +87,13 @@ while 1:
         print "Latency test received"
         test_latency(data_bytes,
                      serversocket if using_udp else client_socket,
-                     udp_host_name if using_udp else None,
+                     udp_host if using_udp else None,
                      port if using_udp else None)
     elif option == 2:
         print "Throughput test received"
         test_throughput(data_bytes,
                         serversocket if using_udp else client_socket,
-                        udp_host_name if using_udp else None,
+                        udp_host if using_udp else None,
                         port if using_udp else None)
     elif option == 3:
         print "Interaction test received"

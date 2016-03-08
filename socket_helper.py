@@ -44,28 +44,30 @@ def send_udp_friendly(data, sock, host, port):
 
     while bytes_sent < total_size:
         if (total_size - bytes_sent) < udp_message_size:
-            sock.sendto(data[bytes_sent:total_size], (host, port))
+            sock.sendto(data[bytes_sent:total_size], host)
             bytes_sent += (total_size - bytes_sent)
         else:
-            sock.sendto(data[bytes_sent:bytes_sent + udp_message_size], (host, port))
+            sock.sendto(data[bytes_sent:bytes_sent + udp_message_size], host)
             bytes_sent += udp_message_size
 
 
 def receive_udp_friendly(sock):
-    rx_data = bytearray()
+    rx_data = []
 
     (data, host) = sock.recvfrom(udp_message_size)
     data_len = len(data)
     end_byte = ord(data[data_len - 1])
 
     if data_len == 1:
-        rx_data.append(data[:])
+        rx_data.append(bytearray(data))
         return (rx_data, host)
 
+    rx_data.append(bytearray(data))
+
     while end_byte != 255:
-        rx_data.append(bytes(data))
+        rx_data.append(bytearray(data))
         (data, host) = sock.recvfrom(udp_message_size)
         data_len = len(data)
         end_byte = ord(data[data_len - 1])
 
-    return (rx_data, host[0])
+    return (rx_data, host)

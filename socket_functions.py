@@ -74,7 +74,7 @@ def calc_throughput(tp_size, tp_sock, tp_host=None, tp_port=None):
     amount_sent = 0
 
     if tp_sock.type is socket.SOCK_DGRAM:
-        send_udp_friendly(tp_array, tp_sock)
+        send_udp_friendly(tp_array, tp_sock, tp_host, tp_port)
     else:
         while amount_sent < len(tp_array):
             sent = tp_sock.send(tp_array[amount_sent:])
@@ -204,7 +204,7 @@ def test_throughput(tp_data, tp_sock, tp_host=None, tp_port=None):
     amount_sent = 0
 
     if tp_sock.type is socket.SOCK_DGRAM:
-        send_udp_friendly(tp_reply, tp_sock)
+        send_udp_friendly(tp_reply, tp_sock, tp_host, tp_sock)
     else:
         while amount_sent < len(tp_reply):
             sent = tp_sock.send(tp_reply[amount_sent:])
