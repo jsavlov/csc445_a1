@@ -31,7 +31,7 @@ def fresh_server_socket(port, is_udp=False):
 
     return f_server_socket
 
-udp_message_size = 8000 # Size of the UDP message in Kilobytes
+udp_message_size = 16000 # Size of the UDP message in Kilobytes
 
 def send_udp_friendly(data, sock, host, port):
     """
