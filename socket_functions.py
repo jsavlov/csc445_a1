@@ -61,7 +61,7 @@ def calc_throughput(tp_size, tp_sock, tp_host=None, tp_port=None):
 
     tp_array = bytearray()
     tp_array.append(2)
-    i += 0
+    i += 1
 
     while i < tp_size - 1:
         tp_array.append(0)
