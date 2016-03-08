@@ -1,12 +1,12 @@
 import socket
 import time
-from socket_helper import send_udp_friendly, udp_message_size
+from socket_helper import send_udp_friendly, udp_message_size, receive_udp_friendly
 
 """
 Client Functions
 """
 # Sends latency test to the server
-def send_latency(s_lat_len, s_lat_sock):
+def send_latency(s_lat_len, s_lat_sock, s_lat_host=None, s_lat_port=None):
     i = 0
 
     lat_array = bytearray()
@@ -23,31 +23,40 @@ def send_latency(s_lat_len, s_lat_sock):
     s_time = time.time()
     amount_sent = 0
 
-    if s_lat_sock.type is socket.SOCK_DGRAM and len(lat_array) > udp_message_size:
-        send_udp_friendly(lat_array, s_lat_sock)
+    if s_lat_sock.type is socket.SOCK_DGRAM:
+        send_udp_friendly(lat_array, s_lat_sock, s_lat_host, s_lat_port)
     else:
         while amount_sent < len(lat_array):
             sent = s_lat_sock.send(lat_array[amount_sent:])
             amount_sent += sent
 
-    s_lat_sock.shutdown(socket.SHUT_RD)
+    if s_lat_sock.type is socket.SOCK_STREAM:
+        s_lat_sock.shutdown(socket.SHUT_RD)
+
     return s_time
 
 # receives the message back from the server
-def receive_latency(r_lat_len, r_lat_sock):
+def receive_latency(r_lat_len, r_lat_sock, r_lat_host=None, r_lat_port=None):
     received_bytes = []
 
-    data = r_lat_sock.recv(r_lat_len)
-    while data != '':
-        received_bytes.append(bytes(data))
+    if r_lat_sock.type is socket.SOCK_DGRAM:
+        (data, host) = receive_udp_friendly(r_lat_sock)
+        received_bytes.append(data)
+    else:
         data = r_lat_sock.recv(r_lat_len)
+        while data != '':
+            received_bytes.append(bytes(data))
+            data = r_lat_sock.recv(r_lat_len)
 
     r_time = time.time()
-    r_lat_sock.close()
+
+    if r_lat_sock.type is socket.SOCK_STREAM:
+        r_lat_sock.close()
+
     return r_time
 
 # calculates throughput in the client
-def calc_throughput(tp_size, tp_sock):
+def calc_throughput(tp_size, tp_sock, tp_host=None, tp_port=None):
     i = 0
 
     tp_array = bytearray()
@@ -64,26 +73,34 @@ def calc_throughput(tp_size, tp_sock):
     s_time_b = time.time()
     amount_sent = 0
 
-    if tp_sock.type is socket.SOCK_DGRAM and len(tp_array) > udp_message_size:
-        send_udp_friendly(tp_array, tp_sock)
+    if tp_sock.type is socket.SOCK_DGRAM:
+        send_udp_friendly(tp_array, tp_sock, tp_host, tp_port)
     else:
         while amount_sent < len(tp_array):
             sent = tp_sock.send(tp_array[amount_sent:])
             amount_sent += sent
 
-    tp_sock.shutdown(socket.SHUT_RD)
+    if tp_sock.type is socket.SOCK_STREAM:
+        tp_sock.shutdown(socket.SHUT_RD)
+
     s_time_e = time.time()
     s_time = s_time_e - s_time_b
 
     reply_bytes = []
 
     r_time_b = time.time()
-    data = tp_sock.recv(4096)
-    while data != '':
+    if tp_sock.type is socket.SOCK_DGRAM:
+        (data, host) = receive_udp_friendly(tp_sock)
         reply_bytes.append(data)
+    else:
         data = tp_sock.recv(4096)
+        while data != '':
+            reply_bytes.append(data)
+            data = tp_sock.recv(4096)
 
-    tp_sock.close()
+    if tp_sock.type is socket.SOCK_STREAM:
+        tp_sock.close()
+
     r_time_e = time.time()
     r_time = r_time_e - r_time_b
 
@@ -134,7 +151,7 @@ Server functions
 """
 
 # Latency logic on the server end
-def test_latency(lat_data, sock):
+def test_latency(lat_data, sock, lat_host=None, lat_port=None):
     data_len = len(lat_data)
     lat_reply = bytearray()
 
@@ -153,8 +170,8 @@ def test_latency(lat_data, sock):
     print "Sending latency reply..."
     amount_sent = 0
 
-    if sock.type is socket.SOCK_DGRAM and len(lat_reply) > udp_message_size:
-        send_udp_friendly(lat_reply, sock)
+    if sock.type is socket.SOCK_DGRAM:
+        send_udp_friendly(lat_reply, sock, lat_host, lat_port)
     else:
         while amount_sent < len(lat_reply):
             sent = sock.send(lat_reply[amount_sent:])
@@ -164,7 +181,7 @@ def test_latency(lat_data, sock):
     print "Reply sent..."
 
 # throughput logic on the server end
-def test_throughput(tp_data, tp_sock):
+def test_throughput(tp_data, tp_sock, tp_host=None, tp_port=None):
     # Send the data back...
     print "Sending throughput reply..."
 
@@ -186,8 +203,8 @@ def test_throughput(tp_data, tp_sock):
 
     amount_sent = 0
 
-    if tp_sock.type is socket.SOCK_DGRAM and len(tp_reply) > udp_message_size:
-        send_udp_friendly(tp_reply, tp_sock)
+    if tp_sock.type is socket.SOCK_DGRAM:
+        send_udp_friendly(tp_reply, tp_sock, tp_host, tp_sock)
     else:
         while amount_sent < len(tp_reply):
             sent = tp_sock.send(tp_reply[amount_sent:])

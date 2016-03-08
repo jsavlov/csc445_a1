@@ -48,6 +48,8 @@ if HOST_SERVER is None:
 if using_udp is None:
     using_udp = False
 
+if using_udp is True:
+    HOST_PAIR = (HOST_SERVER, PORT)
 
 print "Using host " + str(HOST_SERVER)
 print "Using UDP..." if using_udp else "Using TCP..."
@@ -55,48 +57,48 @@ print "Using UDP..." if using_udp else "Using TCP..."
 
 host_socket = fresh_client_socket(HOST_SERVER, PORT, using_udp)
 print "Sending Latency Test: 1 byte"
-lat1_tx_time = send_latency(1, host_socket)
-lat1_rx_time = receive_latency(1, host_socket)
+lat1_tx_time = send_latency(1, host_socket, HOST_PAIR if using_udp else None, PORT if using_udp else None)
+lat1_rx_time = receive_latency(1, host_socket, HOST_PAIR if using_udp else None, PORT if using_udp else None)
 lat1_rtt_time = lat1_rx_time - lat1_tx_time
 print "Latency 1 byte result: " + str(float("%.5f" % (lat1_rtt_time * 1000))) + " ms"
 
 host_socket = fresh_client_socket(HOST_SERVER, PORT, using_udp)
 print "Sending Latency Test: 32 bytes"
-lat32_tx_time = send_latency(32, host_socket)
-lat32_rx_time = receive_latency(32, host_socket)
+lat32_tx_time = send_latency(32, host_socket, HOST_PAIR if using_udp else None, PORT if using_udp else None)
+lat32_rx_time = receive_latency(32, host_socket, HOST_PAIR if using_udp else None, PORT if using_udp else None)
 lat32_rtt_time = lat32_rx_time - lat32_tx_time
 print "Latency 32 byte result: " + str(float("%.5f" % (lat32_rtt_time * 1000))) + " ms"
 
 host_socket = fresh_client_socket(HOST_SERVER, PORT, using_udp)
 print "Sending Latency Test: 1024 bytes"
-lat1024_tx_time = send_latency(1024, host_socket)
-lat1024_rx_time = receive_latency(1024, host_socket)
+lat1024_tx_time = send_latency(1024, host_socket, HOST_PAIR if using_udp else None, PORT if using_udp else None)
+lat1024_rx_time = receive_latency(1024, host_socket, HOST_PAIR if using_udp else None, PORT if using_udp else None)
 lat1024_rtt_time = lat1024_rx_time - lat1024_tx_time
 print "Latency 1024 byte result: " + str(float("%.5f" % (lat1024_rtt_time * 1000))) + " ms"
 
 host_socket = fresh_client_socket(HOST_SERVER, PORT, using_udp)
 print "Throughput test: 1 KBytes"
-tp1k_tx_rate = calc_throughput(1000, host_socket)
+tp1k_tx_rate = calc_throughput(1000, host_socket, HOST_PAIR if using_udp else None, PORT if using_udp else None)
 print "Throughput 1 Kbyte result: " + str(float("%.5f" % (tp1k_tx_rate / 1000000))) + " MB/s"
 
 host_socket = fresh_client_socket(HOST_SERVER, PORT, using_udp)
 print "Throughput test: 16 KBytes"
-tp16k_tx_rate = calc_throughput(16000, host_socket)
+tp16k_tx_rate = calc_throughput(16000, host_socket, HOST_PAIR if using_udp else None, PORT if using_udp else None)
 print "Throughput 16 Kbyte result: " + str(float("%.5f" % (tp16k_tx_rate / 1000000))) + " MB/s"
 
 host_socket = fresh_client_socket(HOST_SERVER, PORT, using_udp)
 print "Throughput test: 64 KBytes"
-tp64k_tx_rate = calc_throughput(64000, host_socket)
+tp64k_tx_rate = calc_throughput(64000, host_socket, HOST_PAIR if using_udp else None, PORT if using_udp else None)
 print "Throughput 64 Kbyte result: " + str(float("%.5f" % (tp64k_tx_rate / 1000000))) + " MB/s"
 
 host_socket = fresh_client_socket(HOST_SERVER, PORT, using_udp)
 print "Throughput test: 256 KBytes"
-tp256k_tx_rate = calc_throughput(256000, host_socket)
+tp256k_tx_rate = calc_throughput(256000, host_socket, HOST_PAIR if using_udp else None, PORT if using_udp else None)
 print "Throughput 256 Kbyte result: " + str(float("%.5f" % (tp256k_tx_rate / 1000000))) + " MB/s"
 
 host_socket = fresh_client_socket(HOST_SERVER, PORT, using_udp)
 print "Throughput test: 1 MBytes"
-tp1m_tx_rate = calc_throughput(1000000, host_socket)
+tp1m_tx_rate = calc_throughput(1000000, host_socket, HOST_PAIR if using_udp else None, PORT if using_udp else None)
 print "Throughput 1 Mbyte result: " + str(float("%.5f" % (tp1m_tx_rate / 1000000))) + " MB/s"
 
 # If we aren't using UDP, do the interaction tests
@@ -116,8 +118,7 @@ if using_udp is False:
     interaction_1kb_time = observe_interaction(1024, 1024, host_socket)
     print "Interaction test 1024 x 1KByte result: " + str(float("%.5f" % interaction_1kb_time)) + " sec"
 
-# Close the connection
-host_socket.close()
+
 
 
 

@@ -4,7 +4,7 @@
 import socket
 import getopt
 import sys
-from socket_helper import fresh_server_socket
+from socket_helper import fresh_server_socket, receive_udp_friendly
 from socket_functions import test_latency, test_throughput, test_interaction
 
 
@@ -44,7 +44,9 @@ serversocket = fresh_server_socket(port, using_udp)
 
 # Start the server
 serversocket.bind((socket.gethostname(), port))
-serversocket.listen(5)
+
+if using_udp is False:
+    serversocket.listen(5)
 
 print "Server started on port " + str(port) + ". Host: " + str(socket.gethostname())
 
@@ -52,38 +54,52 @@ print "Server started on port " + str(port) + ". Host: " + str(socket.gethostnam
 while 1:
     # Wait for connection
     print "Waiting for connection..."
-    (client_socket, client_addr) = serversocket.accept()
-
-    # Receive data from the connection
-    print "Connection received from " + str(client_addr)
     data_bytes = []
-    data = client_socket.recv(buf_size)
-    incoming_interaction_test = False
-    while data != '' or incoming_interaction_test is True:
-        data_bytes.append(bytearray(data))
-        if data_bytes[0][0] == 3 and incoming_interaction_test is False:
-            incoming_interaction_test = True
 
-        if incoming_interaction_test is True:
-            d_len = len(data)
-            if ord(data[d_len - 1]) == 255:
-                break
+    if using_udp:
+        # Receive the data via UDP
+        (data, udp_host) = receive_udp_friendly(serversocket)
+        print "Received UDP connection from " + str(udp_host)
+        data_bytes = data
+    else:
+        (client_socket, client_addr) = serversocket.accept()
+
+        # Receive data from the connection via TCP
+        print "Connection received from " + str(client_addr)
+
         data = client_socket.recv(buf_size)
+        incoming_interaction_test = False
+        while data != '' or incoming_interaction_test is True:
+            data_bytes.append(bytearray(data))
+            if data_bytes[0][0] == 3 and incoming_interaction_test is False:
+                incoming_interaction_test = True
+
+            if incoming_interaction_test is True:
+                d_len = len(data)
+                if ord(data[d_len - 1]) == 255:
+                    break
+            data = client_socket.recv(buf_size)
 
     option = data_bytes[0][0]
 
     print repr(option)
     if option == 1:
         print "Latency test received"
-        test_latency(data_bytes, client_socket)
+        test_latency(data_bytes,
+                     serversocket if using_udp else client_socket,
+                     udp_host if using_udp else None,
+                     port if using_udp else None)
     elif option == 2:
         print "Throughput test received"
-        test_throughput(data_bytes, client_socket)
+        test_throughput(data_bytes,
+                        serversocket if using_udp else client_socket,
+                        udp_host if using_udp else None,
+                        port if using_udp else None)
     elif option == 3:
         print "Interaction test received"
         test_interaction(client_socket)
     else:
         print "No idea..."
 
-
-client_socket.close()
+if using_udp:
+    client_socket.close()
